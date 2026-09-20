@@ -1,6 +1,57 @@
 import("all.gn")
 is_component_build = false
 is_official_build = true
+is_debug = false
+symbol_level = 0
+enable_pdf = false
+enable_webrtc = false
+enable_print_preview = false
+enable_web_speech = false
+enable_notifications = false
+disable_ftp_support = true
+# 彻底禁用DevTools模块
+enable_devtools = false
+# 同步关闭远程调试协议
+enable_remote_debugging = false
+# 移除DevTools对应的调试协议依赖
+blink_developer_extensions_enabled = false
+
+# 关闭谷歌遥测、使用统计上报
+enable_telemetry = false
+# 禁用Chromium用户体验改进计划
+enable_crashpad = false
+# 关闭浏览器内置新特性引导、体验提示弹窗
+enable_nux = false
+# 移除谷歌账号同步、个性化推荐相关模块
+enable_sync = false
+# 禁用后台页面预加载体验优化功能
+enable_prerendering = false
+# 禁用Chromium内置的扩展程序加载能力
+enable_extensions = false
+# 移除Chromium自带的书签、历史记录管理模块
+enable_bookmarks = false
+# 关闭Blink渲染引擎中flex布局模块的编译构建
+blink_flex_layout_enabled = false
+# 移除CSS变量自定义属性支持
+blink_css_variables_enabled = false
+# 基础V8裁剪配置
+v8_enable_debugger_support = false
+# 彻底移除V8调试器模块，和之前移除DevTools的操作完全适配
+v8_enable_disassembler = false
+# 关闭V8字节码反汇编能力，移除相关调试工具代码
+v8_enable_gdbjit = false
+# 禁用GDB JIT调试接口，减少底层调试依赖
+v8_no_strict_aliasing = true
+# 优化内存别名规则，进一步压缩V8二进制体积
+v8_optimized_debug = false
+# 关闭优化版调试符号生成，大幅减少调试信息占用空间
+v8_use_external_startup_data = false
+# 关闭HTML历史记录管理模块，移除页面前进后退的冗余缓存逻辑
+blink_html_history_enabled = false
+# 禁用HTML离线应用缓存能力，裁剪AppCache相关解析代码
+blink_html_appcache_enabled = false
+# 禁用HTML表单自动填充、自动完成内置能力
+blink_html_autofill_enabled = false
 
 # This may be guarded behind is_chrome_branded alongside
 # proprietary_codecs https://webrtc-review.googlesource.com/c/src/+/36321,
