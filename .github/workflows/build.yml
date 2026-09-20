@@ -1,0 +1,50 @@
+name: 编译
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  build-electron:
+    # 注意：标准免费 runner 可能因超时或内存不足而失败
+    # 建议使用自托管运行器或高性能托管运行器
+    runs-on: ubuntu-latest 
+    
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 使用较新的 LTS 版本
+
+      - name: 安装编译工具
+        run: npm install -g @electron/build-tools
+
+      - name: 初始化构建环境
+        run: |
+          # --bootstrap 会自动下载 Chromium 源码和依赖，这一步非常耗时且占用大量磁盘空间
+          e init --fork electron/electron --bootstrap release
+      
+      - name: 编译 electron
+        run: |
+          cd src/electron
+          e build release
+
+      - name: 上传到 Github Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: electron-build-output
+          path: src/out/Testing # 根据实际构建输出路径调整
+          retention-days: 2
+
+      - name: 发布到 Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') # 仅在打标签时触发
+        with:
+          files: |
+            src/out/Testing/electron.zip
+            src/out/Testing/symbols.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
