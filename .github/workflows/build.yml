@@ -1,50 +1,48 @@
-name: 编译
+
+name: Build and Release Electron App
+
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # 允许手动触发
+    tags:
+      - 'v*' # 当推送 v* 格式的标签时触发发布
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-electron:
-    # 注意：标准免费 runner 可能因超时或内存不足而失败
-    # 建议使用自托管运行器或高性能托管运行器
-    runs-on: ubuntu-latest 
-    
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
     steps:
-      - name: 检出源码
+      - name: Check out Git repository
         uses: actions/checkout@v4
 
-      - name: 安装 Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 使用较新的 LTS 版本
+          node-version: 20
 
-      - name: 安装编译工具
-        run: npm install -g @electron/build-tools
+      - name: Install Dependencies
+        run: npm install
 
-      - name: 初始化构建环境
-        run: |
-          # --bootstrap 会自动下载 Chromium 源码和依赖，这一步非常耗时且占用大量磁盘空间
-          e init --fork electron/electron --bootstrap release
-      
-      - name: 编译 electron
-        run: |
-          cd src/electron
-          e build release
-
-      - name: 上传到 Github Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Build/Release Electron App
+        uses: samuelmeuli/action-electron-builder@v1
         with:
-          name: electron-build-output
-          path: src/out/Testing # 根据实际构建输出路径调整
-          retention-days: 2
-
-      - name: 发布到 Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/') # 仅在打标签时触发
-        with:
-          files: |
-            src/out/Testing/electron.zip
-            src/out/Testing/symbols.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GitHub Token，用于上传发布资产
+          github_token: ${{ secrets.github_token }}
+          
+          # 如果当前提交是标签（如 v1.0.0），则执行发布操作
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          
+          # 可选：指定构建脚本名称，默认为 build
+          # build_script_name: build
+          
+          # 可选：跳过构建脚本，直接运行 electron-builder
+          # skip_build: false
+          
+          # 可选：传递给 electron-builder 的额外参数
+          # args: --publish always
