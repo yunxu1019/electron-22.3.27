@@ -6,9 +6,14 @@ symbol_level = 0
 enable_pdf = false
 enable_webrtc = false
 enable_print_preview = false
-enable_web_speech = false
 enable_notifications = false
 disable_ftp_support = true
+
+# 关闭Web Speech音频识别模块编译
+enable_web_speech = false
+# 同步移除音频识别依赖的语音处理底层逻辑
+blink_speech_recognition_enabled = false
+
 # 彻底禁用DevTools模块
 enable_devtools = false
 # 同步关闭远程调试协议
@@ -52,6 +57,14 @@ blink_html_history_enabled = false
 blink_html_appcache_enabled = false
 # 禁用HTML表单自动填充、自动完成内置能力
 blink_html_autofill_enabled = false
+# 关闭WebSQL模块编译
+blink_web_sql_enabled = false
+# 同步移除WebSQL依赖的SQLite扩展解析逻辑
+use_sqlite = false
+# 关闭IndexedDB模块编译
+blink_indexed_db_enabled = false
+# 同步移除IndexedDB依赖的LevelDB存储引擎冗余逻辑
+use_leveldb = false
 
 # This may be guarded behind is_chrome_branded alongside
 # proprietary_codecs https://webrtc-review.googlesource.com/c/src/+/36321,
