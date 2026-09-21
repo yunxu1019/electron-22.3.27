@@ -21,6 +21,7 @@ jobs:
         shell: cmd
 
       - name: 设置环境变量
+        shell: cmd
         run: |
           setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
           git config --global core.filemode false
@@ -29,8 +30,7 @@ jobs:
           git config --global core.fscache true
           git config --global core.preloadindex true
           git config --global core.longpaths true
-
-        shell: cmd
+          md ..\src
 
       - name: 安装 Node.js
         uses: actions/setup-node@v6
@@ -44,14 +44,14 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v6
 
+      - name: 初始化编译环境
+        run: |
+          e init --root=../src --bootstrap release
+
       - name: 安装依赖
         run: |
           npm install -g yarn
           yarn install --frozen-lockfile
-
-      - name: 初始化编译环境
-        run: |
-          e init --root=./ --bootstrap release
 
       - name: 看看当前目录都有些什么
         run: |
