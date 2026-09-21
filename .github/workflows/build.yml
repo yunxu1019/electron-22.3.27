@@ -1,5 +1,5 @@
 
-name: Build and Release Electron App
+name: 编译生成二进制文件
 
 on:
   push:
@@ -28,6 +28,7 @@ jobs:
           git config --global branch.autosetuprebase always
           git config --global core.fscache true
           git config --global core.preloadindex true
+          git config --global core.longpaths true
 
         shell: cmd
 
