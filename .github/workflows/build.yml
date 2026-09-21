@@ -4,10 +4,6 @@ name: Build and Release Electron App
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*' # 当推送 v* 格式的标签时触发发布
-  pull_request:
-    branches: [ main ]
 
 jobs:
   release:
@@ -15,34 +11,46 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [windows-latest]
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
+      - name: 设置环境变量
+        run: |
+          setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
+        shell: cmd
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: 安装 Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 20
 
-      - name: Install Dependencies
-        run: npm install
+      - name: 安装编译工具
+        run: |
+          npm install -g @electron/build-tools
 
-      - name: Build/Release Electron App
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          # GitHub Token，用于上传发布资产
-          github_token: ${{ secrets.github_token }}
-          
-          # 如果当前提交是标签（如 v1.0.0），则执行发布操作
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          
-          # 可选：指定构建脚本名称，默认为 build
-          # build_script_name: build
-          
-          # 可选：跳过构建脚本，直接运行 electron-builder
-          # skip_build: false
-          
-          # 可选：传递给 electron-builder 的额外参数
-          # args: --publish always
+      - name: 检出代码
+        uses: actions/checkout@v6
+
+      - name: 安装依赖
+        run: |
+          node script/yarn.js install --frozen-lockfile
+
+      - name: 初始化编译环境
+        run: |
+          e init --root=./ --bootstrap release
+
+      - name: 看看当前目录都有些什么
+        run: |
+          cd
+          dir
+          dir out
+          dir chromium_src
+        shell: cmd
+
+      # - name: 上传到 Github Artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: electron-build-output
+      #     path: src/out/Testing # 根据实际构建输出路径调整
+      #     retention-days: 2
+
