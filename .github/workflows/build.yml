@@ -23,6 +23,8 @@ jobs:
       - name: 设置环境变量
         run: |
           setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
+          git config --global core.filemode false
+
         shell: cmd
 
       - name: 安装 Node.js
