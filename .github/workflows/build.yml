@@ -39,7 +39,8 @@ jobs:
 
       - name: 安装依赖
         run: |
-          npm ci
+          npm install -g yarn
+          yarn install --frozen-lockfile
 
       - name: 初始化编译环境
         run: |
