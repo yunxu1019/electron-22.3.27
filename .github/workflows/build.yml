@@ -29,13 +29,17 @@ jobs:
           md ..\root
           cd ..\root
           setx CHROMIUM_BUILDTOOLS_PATH %cd%\buildtools
+          refreshenv
+          if not exist "%GIT_CACHE_PATH%" md "%GIT_CACHE_PATH%"
 
       - name: 显示当前目录
         shell: cmd
         run: |
-          echo %GIT_CACHE_PATH%
-          if not exist "%GIT_CACHE_PATH%" md "%GIT_CACHE_PATH%"
-          cd
+          echo DEPOT_TOOLS_WIN_TOOLCHAIN %DEPOT_TOOLS_WIN_TOOLCHAIN%
+          echo GIT_CACHE_PATH %GIT_CACHE_PATH%
+          echo GIT_CACH_PATH %GIT_CACHE_PATH%
+          echo CHROMIUM_BUILDTOOLS_PATH %CHROMIUM_BUILDTOOLS_PATH%
+          echo cd %cd%
           dir
 
       - name: 安装 Node.js
