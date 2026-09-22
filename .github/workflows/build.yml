@@ -45,8 +45,6 @@ jobs:
           git config --global core.fscache true
           git config --global core.preloadindex true
           git config --global core.longpaths true
-          md ..\root
-          cd ..\root
           setx CHROMIUM_BUILDTOOLS_PATH %cd%\buildtools
           refreshenv
           if not exist "%GIT_CACHE_PATH%" md "%GIT_CACHE_PATH%"
