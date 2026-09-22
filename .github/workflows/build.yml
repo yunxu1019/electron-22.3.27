@@ -15,23 +15,6 @@ jobs:
 
     steps:
 
-      - name: 设置环境变量
-        shell: cmd
-        run: |
-          setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
-          setx GIT_CACHE_PATH %userprofile%\.git_cache
-          git config --global core.filemode false
-          git config --global core.autocrlf false
-          git config --global branch.autosetuprebase always
-          git config --global core.fscache true
-          git config --global core.preloadindex true
-          git config --global core.longpaths true
-          md ..\root
-          cd ..\root
-          setx CHROMIUM_BUILDTOOLS_PATH %cd%\buildtools
-          refreshenv
-          if not exist "%GIT_CACHE_PATH%" md "%GIT_CACHE_PATH%"
-
       - name: 显示当前目录
         shell: cmd
         run: |
@@ -51,17 +34,28 @@ jobs:
         run: |
           npm install -g @electron/build-tools
 
-      - name: 检出代码
+      - name: 检出并编译
+        shell: cmd
         run: |
-          gclient config --name "src/electron" --unmanaged https://github.com/yunxu1019/electron-22.3.27
-          gclient sync --with_branch_heads --with_tags
+          setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
+          setx GIT_CACHE_PATH %userprofile%\.git_cache
+          git config --global core.filemode false
+          git config --global core.autocrlf false
+          git config --global branch.autosetuprebase always
+          git config --global core.fscache true
+          git config --global core.preloadindex true
+          git config --global core.longpaths true
+          md ..\root
+          cd ..\root
+          setx CHROMIUM_BUILDTOOLS_PATH %cd%\buildtools
+          refreshenv
+          if not exist "%GIT_CACHE_PATH%" md "%GIT_CACHE_PATH%"
+          git clone https://github.com/yunxu1019/electron-22.3.27 src/electron
           cd src/electron
           git pull
-          gclient sync -f
-
-      - name: 编译
-        run: |
           gn gen out/Release --args="import(\"//electron/build/args/release.gn\")"
+          dir /b
+
 
       # - name: 安装依赖
       #   run: |
