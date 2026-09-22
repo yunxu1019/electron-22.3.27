@@ -14,23 +14,28 @@ jobs:
         os: [windows-latest]
 
     steps:
-      - name: 显示当前目录
-        run: |
-          cd
-          dir
-        shell: cmd
 
       - name: 设置环境变量
         shell: cmd
         run: |
           setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
+          setx GIT_CACHE_PATH %userprofile%\.git_cache
+          if not exist %GIT_CACHE_PATH% md %GIT_CACHE_PATH%
           git config --global core.filemode false
           git config --global core.autocrlf false
           git config --global branch.autosetuprebase always
           git config --global core.fscache true
           git config --global core.preloadindex true
           git config --global core.longpaths true
-          md ..\src
+          md ..\root
+          cd ..\root
+          setx CHROMIUM_BUILDTOOLS_PATH %cd%\buildtools
+
+      - name: 显示当前目录
+        shell: cmd
+        run: |
+          cd
+          dir
 
       - name: 安装 Node.js
         uses: actions/setup-node@v6
@@ -42,16 +47,20 @@ jobs:
           npm install -g @electron/build-tools
 
       - name: 检出代码
-        uses: actions/checkout@v6
+          gclient config --name "src/electron" --unmanaged https://github.com/yunxu1019/electron-22.3.27
+          gclient sync --with_branch_heads --with_tags
+          cd src/electron
+          git pull
+          gclient sync -f
 
-      - name: 初始化编译环境
+      - name: 编译
         run: |
-          e init --root=../src --bootstrap release
+          gn gen out/Release --args="import(\"//electron/build/args/release.gn\")"
 
-      - name: 安装依赖
-        run: |
-          npm install -g yarn
-          yarn install --frozen-lockfile
+      # - name: 安装依赖
+      #   run: |
+      #     npm install -g yarn
+      #     yarn install --frozen-lockfile
 
       - name: 看看当前目录都有些什么
         run: |
