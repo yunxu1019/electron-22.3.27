@@ -33,7 +33,8 @@ jobs:
       - name: 显示当前目录
         shell: cmd
         run: |
-          if not exist %GIT_CACHE_PATH% md %GIT_CACHE_PATH%
+          echo %GIT_CACHE_PATH%
+          if not exist "%GIT_CACHE_PATH%" md "%GIT_CACHE_PATH%"
           cd
           dir
 
