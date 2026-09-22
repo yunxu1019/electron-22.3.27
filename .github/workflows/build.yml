@@ -47,6 +47,7 @@ jobs:
           npm install -g @electron/build-tools
 
       - name: 检出代码
+        run: |
           gclient config --name "src/electron" --unmanaged https://github.com/yunxu1019/electron-22.3.27
           gclient sync --with_branch_heads --with_tags
           cd src/electron
