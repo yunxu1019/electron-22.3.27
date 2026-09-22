@@ -20,7 +20,6 @@ jobs:
         run: |
           setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
           setx GIT_CACHE_PATH %userprofile%\.git_cache
-          if not exist %GIT_CACHE_PATH% md %GIT_CACHE_PATH%
           git config --global core.filemode false
           git config --global core.autocrlf false
           git config --global branch.autosetuprebase always
@@ -34,6 +33,7 @@ jobs:
       - name: 显示当前目录
         shell: cmd
         run: |
+          if not exist %GIT_CACHE_PATH% md %GIT_CACHE_PATH%
           cd
           dir
 
